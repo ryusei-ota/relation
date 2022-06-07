@@ -2,16 +2,60 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type CategoryCount {
+  posts: Int!
+}
+
+type Category {
+  id: ID!
+  name: String!
+  posts: [Post!]
+  _count: CategoryCount!
+}
+
+type PostCount {
+  categories: Int!
+}
+
+type Post {
+  id: ID!
+  createdAt: DateTime!
+  title: String!
+  published: Boolean!
+  author: User!
+  authorId: Int!
+  categories: [Category!]
+  _count: PostCount!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Profile {
+  id: ID!
+  bio: String!
+  user: User!
+  userId: Int!
+}
+
+type UserCount {
+  posts: Int!
+}
+
 type User {
   id: ID!
-
-  """@Validator.@IsEmail()"""
   email: String!
-  name: String!
+  name: String
+  posts: [Post!]
+  profile: Profile
+  _count: UserCount!
 }
 
 type Query {
   user(where: UserWhereInput, orderBy: [UserOrderByWithRelationInput!], cursor: UserWhereUniqueInput, take: Int, skip: Int, distinct: [UserScalarFieldEnum!]): User!
+  findAll(where: UserWhereInput, orderBy: [UserOrderByWithRelationInput!], cursor: UserWhereUniqueInput, take: Int, skip: Int, distinct: [UserScalarFieldEnum!]): [User!]!
 }
 
 input UserWhereInput {
@@ -20,8 +64,9 @@ input UserWhereInput {
   NOT: [UserWhereInput!]
   id: IntFilter
   email: StringFilter
-  name: StringFilter
-  password: StringFilter
+  name: StringNullableFilter
+  posts: PostListRelationFilter
+  profile: ProfileRelationFilter
 }
 
 input IntFilter {
@@ -74,16 +119,142 @@ input NestedStringFilter {
   not: NestedStringFilter
 }
 
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
+}
+
+input NestedStringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
+}
+
+input PostListRelationFilter {
+  every: PostWhereInput
+  some: PostWhereInput
+  none: PostWhereInput
+}
+
+input PostWhereInput {
+  AND: [PostWhereInput!]
+  OR: [PostWhereInput!]
+  NOT: [PostWhereInput!]
+  id: IntFilter
+  createdAt: DateTimeFilter
+  title: StringFilter
+  published: BoolFilter
+  author: UserRelationFilter
+  authorId: IntFilter
+  categories: CategoryListRelationFilter
+}
+
+input DateTimeFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: NestedDateTimeFilter
+}
+
+input NestedDateTimeFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: NestedDateTimeFilter
+}
+
+input BoolFilter {
+  equals: Boolean
+  not: NestedBoolFilter
+}
+
+input NestedBoolFilter {
+  equals: Boolean
+  not: NestedBoolFilter
+}
+
+input UserRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
+}
+
+input CategoryListRelationFilter {
+  every: CategoryWhereInput
+  some: CategoryWhereInput
+  none: CategoryWhereInput
+}
+
+input CategoryWhereInput {
+  AND: [CategoryWhereInput!]
+  OR: [CategoryWhereInput!]
+  NOT: [CategoryWhereInput!]
+  id: IntFilter
+  name: StringFilter
+  posts: PostListRelationFilter
+}
+
+input ProfileRelationFilter {
+  is: ProfileWhereInput
+  isNot: ProfileWhereInput
+}
+
+input ProfileWhereInput {
+  AND: [ProfileWhereInput!]
+  OR: [ProfileWhereInput!]
+  NOT: [ProfileWhereInput!]
+  id: IntFilter
+  bio: StringFilter
+  user: UserRelationFilter
+  userId: IntFilter
+}
+
 input UserOrderByWithRelationInput {
   id: SortOrder
   email: SortOrder
   name: SortOrder
-  password: SortOrder
+  posts: PostOrderByRelationAggregateInput
+  profile: ProfileOrderByWithRelationInput
 }
 
 enum SortOrder {
   asc
   desc
+}
+
+input PostOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ProfileOrderByWithRelationInput {
+  id: SortOrder
+  bio: SortOrder
+  user: UserOrderByWithRelationInput
+  userId: SortOrder
 }
 
 input UserWhereUniqueInput {
@@ -95,9 +266,6 @@ enum UserScalarFieldEnum {
   id
   email
   name
-  password
-  createdAt
-  updatedAt
 }
 
 type Mutation {
@@ -106,6 +274,68 @@ type Mutation {
 
 input UserCreateInput {
   email: String!
+  name: String
+  posts: PostCreateNestedManyWithoutAuthorInput
+  profile: ProfileCreateNestedOneWithoutUserInput
+}
+
+input PostCreateNestedManyWithoutAuthorInput {
+  create: [PostCreateWithoutAuthorInput!]
+  connectOrCreate: [PostCreateOrConnectWithoutAuthorInput!]
+  connect: [PostWhereUniqueInput!]
+}
+
+input PostCreateWithoutAuthorInput {
+  createdAt: DateTime
+  title: String!
+  published: Boolean
+  categories: CategoryCreateNestedManyWithoutPostsInput
+}
+
+input CategoryCreateNestedManyWithoutPostsInput {
+  create: [CategoryCreateWithoutPostsInput!]
+  connectOrCreate: [CategoryCreateOrConnectWithoutPostsInput!]
+  connect: [CategoryWhereUniqueInput!]
+}
+
+input CategoryCreateWithoutPostsInput {
   name: String!
-  password: String!
+}
+
+input CategoryCreateOrConnectWithoutPostsInput {
+  where: CategoryWhereUniqueInput!
+  create: CategoryCreateWithoutPostsInput!
+}
+
+input CategoryWhereUniqueInput {
+  id: Int
+}
+
+input PostCreateOrConnectWithoutAuthorInput {
+  where: PostWhereUniqueInput!
+  create: PostCreateWithoutAuthorInput!
+}
+
+input PostWhereUniqueInput {
+  id: Int
+}
+
+input ProfileCreateNestedOneWithoutUserInput {
+  create: ProfileCreateWithoutUserInput
+  connectOrCreate: ProfileCreateOrConnectWithoutUserInput
+  connect: ProfileWhereUniqueInput
+}
+
+input ProfileCreateWithoutUserInput {
+  bio: String!
+}
+
+input ProfileCreateOrConnectWithoutUserInput {
+  where: ProfileWhereUniqueInput!
+  create: ProfileCreateWithoutUserInput!
+}
+
+input ProfileWhereUniqueInput {
+  id: Int
+  userId: Int
 }

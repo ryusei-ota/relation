@@ -1,8 +1,9 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { User } from 'src/@generated/prisma-nestjs-graphql/user/user.model';
 import { CreateOneUserArgs } from 'src/@generated/prisma-nestjs-graphql/user/create-one-user.args';
-import { UsersService } from 'src/users/users.service';
 import { FindFirstUserArgs } from 'src/@generated/prisma-nestjs-graphql/user/find-first-user.args';
+import { FindManyUserArgs } from 'src/@generated/prisma-nestjs-graphql/user/find-many-user.args';
+import { User } from 'src/@generated/prisma-nestjs-graphql/user/user.model';
+import { UsersService } from './user.service';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -16,5 +17,10 @@ export class UsersResolver {
   @Mutation(() => User)
   async createUser(@Args() args: CreateOneUserArgs) {
     return this.userService.createUser(args);
+  }
+
+  @Query(() => [User])
+  async findAll(@Args() args: FindManyUserArgs) {
+    return await this.userService.findAll(args);
   }
 }
