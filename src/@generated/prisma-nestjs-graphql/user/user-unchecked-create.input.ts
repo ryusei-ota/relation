@@ -1,8 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
-import * as Validator from 'class-validator';
-import { HideField } from '@nestjs/graphql';
+import { PostUncheckedCreateNestedManyWithoutAuthorInput } from '../post/post-unchecked-create-nested-many-without-author.input';
+import { ProfileUncheckedCreateNestedOneWithoutUserInput } from '../profile/profile-unchecked-create-nested-one-without-user.input';
 
 @InputType()
 export class UserUncheckedCreateInput {
@@ -13,17 +13,12 @@ export class UserUncheckedCreateInput {
     @Field(() => String, {nullable:false})
     email!: string;
 
-    @Field(() => String, {nullable:false})
-    @Validator.IsNotEmpty()
-    name!: string;
+    @Field(() => String, {nullable:true})
+    name?: string;
 
-    @Field(() => String, {nullable:false})
-    @Validator.MinLength(8)
-    password!: string;
+    @Field(() => PostUncheckedCreateNestedManyWithoutAuthorInput, {nullable:true})
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput;
 
-    @HideField()
-    createdAt?: Date | string;
-
-    @HideField()
-    updatedAt?: Date | string;
+    @Field(() => ProfileUncheckedCreateNestedOneWithoutUserInput, {nullable:true})
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput;
 }

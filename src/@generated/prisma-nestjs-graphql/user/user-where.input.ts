@@ -2,8 +2,9 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { IntFilter } from '../prisma/int-filter.input';
 import { StringFilter } from '../prisma/string-filter.input';
-import { DateTimeFilter } from '../prisma/date-time-filter.input';
-import { HideField } from '@nestjs/graphql';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { PostListRelationFilter } from '../post/post-list-relation-filter.input';
+import { ProfileRelationFilter } from '../profile/profile-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -23,15 +24,12 @@ export class UserWhereInput {
     @Field(() => StringFilter, {nullable:true})
     email?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    name?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    name?: StringNullableFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    password?: StringFilter;
+    @Field(() => PostListRelationFilter, {nullable:true})
+    posts?: PostListRelationFilter;
 
-    @HideField()
-    createdAt?: DateTimeFilter;
-
-    @HideField()
-    updatedAt?: DateTimeFilter;
+    @Field(() => ProfileRelationFilter, {nullable:true})
+    profile?: ProfileRelationFilter;
 }
